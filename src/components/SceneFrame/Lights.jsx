@@ -57,6 +57,23 @@ export const Lights = ({ weather }) => {
         hemisphereLightParamsRef.current.intensity = 0.09;
       }
       break;
+    case "night":
+      {
+        ambiantLightParamsRef.current.color = "#032558";
+        ambiantLightParamsRef.current.intensity = 8;
+      }
+      {
+        spotLightParamsRef.current.color = "#004ec4";
+        spotLightParamsRef.current.intensity = 20.0;
+        spotLightParamsRef.current.position = [80, 90, -35];
+        spotLightParamsRef.current.angle = 0.05;
+        spotLightParamsRef.current.penumbra = 0.01;
+      }
+      {
+        hemisphereLightParamsRef.current.color = "#00b2ff";
+        hemisphereLightParamsRef.current.intensity = 0.1;
+      }
+      break;
     case "rainy":
       {
         ambiantLightParamsRef.current.color = "#4646ef";

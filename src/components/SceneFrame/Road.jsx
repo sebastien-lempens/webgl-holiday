@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Clone, useGLTF, useTexture } from "@react-three/drei";
-import { RepeatWrapping } from "three";
+import { Color, RepeatWrapping } from "three";
 import { useFrame } from "@react-three/fiber";
 export const Road = ({ weather }) => {
   const { nodes } = useGLTF("/scene.glb");
@@ -48,6 +48,12 @@ export const Road = ({ weather }) => {
       layerMaterialData.fresnelPower = 0.25;
       layerMaterialData.fresnelIntensity = 2;
       break;
+    case "night":
+      layerMaterialData.textureMode = "softlight";
+      layerMaterialData.fresnelColor = "#adadad";
+      layerMaterialData.fresnelPower = 0.25;
+      layerMaterialData.fresnelIntensity = 2;
+      break;
     case "rainy":
       layerMaterialData.textureMode = "softlight";
       layerMaterialData.fresnelColor = "#adadad";
@@ -77,7 +83,12 @@ export const Road = ({ weather }) => {
         <Clone receiveShadow castShadow object={roadMesh} inject={<meshStandardMaterial toneMapped={false} map={textureRoad} />} />
       </group>
       <group ref={landscapeRoad}>
-        <Clone object={landscapeMesh} receiveShadow castShadow inject={<meshStandardMaterial toneMapped={false} map={textureLandscape} />} />
+        <Clone
+          object={landscapeMesh}
+          receiveShadow
+          castShadow
+          inject={<meshStandardMaterial toneMapped={false} map={textureLandscape} />}
+        />
         <Clone object={foliageMesh} receiveShadow castShadow inject={<meshStandardMaterial toneMapped={false} map={textureFoliage} />} />
         <Clone object={postMesh} receiveShadow castShadow inject={<meshStandardMaterial toneMapped={false} map={texturePost} />} />
         <Clone object={rockMesh} receiveShadow castShadow inject={<meshStandardMaterial toneMapped={false} map={textureRock} />} />

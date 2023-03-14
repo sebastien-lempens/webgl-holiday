@@ -1,12 +1,13 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Road } from "./SceneFrame/Road";
 import { Van } from "./SceneFrame/Van";
 import { EnvBackground } from "./SceneFrame/EnvBackground";
 import { Lights } from "./SceneFrame/Lights";
 import { Color } from "three";
 import { useControls } from "leva";
+
 export const SceneFrame = ({ weather, cameraParent }) => {
   const frameRef = useRef();
   const cameraRef = useRef();
@@ -26,6 +27,7 @@ export const SceneFrame = ({ weather, cameraParent }) => {
     frameRef.current.rotation.y = cameraParent?.quaternion.y;
     frameRef.current.rotation.x = cameraParent?.quaternion.x;
   });
+
   return (
     <>
       <group>
@@ -37,11 +39,12 @@ export const SceneFrame = ({ weather, cameraParent }) => {
           <group name='SceneFrame' ref={frameRef} position-z={-8.5} scale={[3, 3, 3]}>
             <group ref={scene} position={[...Object.values(scenePosition)]}>
               <Road weather={weather} />
-              <Van  weather={weather} />
+              <Van weather={weather} />
             </group>
           </group>
         </group>
       </group>
+    
     </>
   );
 };

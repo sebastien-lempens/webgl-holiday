@@ -1,11 +1,12 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState } from "react";
 import { useGLTF, useTexture, useFBO } from "@react-three/drei";
 import { folder, useControls } from "leva";
 import { useFrame } from "@react-three/fiber";
 import { Color, DoubleSide, Vector2 } from "three";
+
 export const Van = ({ weather }) => {
   const { nodes } = useGLTF("/scene.glb");
-  console.log(nodes);
+  //console.log(nodes);
   const {
     VanLuggage,
     Van,
@@ -14,6 +15,7 @@ export const Van = ({ weather }) => {
     windows: VanWindows,
     driver: VanDriver,
     driverHand: VanDriverHand,
+    headlights: VanHeadlights,
   } = nodes;
   const vanRef = useRef();
   const vanBodyWorkRef = useRef();
@@ -32,12 +34,13 @@ export const Van = ({ weather }) => {
     }
   );
   // Control
-  const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition } = useControls("Meshs", {
+  const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition, VanHeadlightsPosition } = useControls("Meshs", {
     Van: folder({
       vanPosition: { x: 0, y: 0.73, z: 0 },
       vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
       vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
       vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
+      VanHeadlightsPosition: { x: 0, y: 0.95, z: 0.4 },
     }),
   });
 
@@ -49,6 +52,9 @@ export const Van = ({ weather }) => {
         break;
       case "sunset":
         uColor = new Color("#e83109");
+        break;
+      case "night":
+        uColor = new Color("#42b2eb");
         break;
       case "rainy":
         uColor = new Color("#42b2eb");
@@ -67,14 +73,16 @@ export const Van = ({ weather }) => {
     vanBodyWorkRef.current.position.y = shake;
     VanLuggageRef.current.position.y = shake + shake * 0.3;
     VanLuggageWheelRef.current.rotation.z -= 0.06;
-    vanDriverHandRef.current.rotation.z +=  Math.sin(0.9 - clock.getElapsedTime() *   10) * 0.05;
-    // Uniforms
+    vanDriverHandRef.current.rotation.z += Math.sin(0.9 - clock.getElapsedTime() * 10) * 0.05;
+    // Render Target Windows
     vanRef.current.visible = false;
     gl.setRenderTarget(renderTarget);
     gl.render(scene, camera);
     vanWindowsRef.current.material.uniforms.uTexture.value = renderTarget.texture;
     gl.setRenderTarget(null);
     vanRef.current.visible = true;
+
+    // Render Target Bloom
   });
 
   return (
@@ -105,9 +113,9 @@ export const Van = ({ weather }) => {
               toneMapped={false}
               side={DoubleSide}
               map={textureVanStructure}
-              envMapIntensity={1}
-              roughness={0.5}
-              metalness={0.5}
+              envMapIntensity={3}
+              roughness={0.3}
+              metalness={0.7}
             />
           </mesh>
           <mesh
@@ -160,7 +168,7 @@ export const Van = ({ weather }) => {
                 //vec3 texture = vec3( texture2D(uTexture, vec2(ux-0.1, uy-0.1)) );
                 vec3 texture = vec3(blur5(uTexture, vec2(ux-0.1, uy-0.1), uResolution.xy, vec2(5.0,1.0)));
                 color = mix(texture, uColor * vec3(-0.25) ,texture.y);
-                gl_FragColor.rgba = vec4(color, 0.95);
+                gl_FragColor.rgba = vec4(color, 0.85);
               }`}
             />
           </mesh>
@@ -172,7 +180,7 @@ export const Van = ({ weather }) => {
             receiveShadow
             castShadow
           >
-            <meshStandardMaterial color={"#a3978b"} roughness={.6} metalness={0} />
+            <meshStandardMaterial color={"#a3978b"} roughness={0.6} metalness={0} />
           </mesh>
           <mesh
             name='DriverHand'
@@ -188,6 +196,18 @@ export const Van = ({ weather }) => {
           <mesh name='Seats' geometry={VanSeats.geometry} position={[...Object.values(vanSeatsPosition)]}>
             <meshBasicMaterial color={"rgb(25,25,25)"} />
           </mesh>
+          <group visible={weather === "night"} name='Headlights' position={[...Object.values(VanHeadlightsPosition)]}>
+            {/* <SpotLight   distance={100} angle={0.1} penumbra={0.15} color={new Color("#e3ff42")} intensity={10} position={[0, 1.2, 2]} /> */}
+            <mesh visible={false} name='Headlights' geometry={VanHeadlights.geometry}>
+              <meshStandardMaterial
+                emissive={new Color("yellow")}
+                emissiveIntensity={5}
+                color={new Color("yellow")}
+                toneMapped={false}
+                envMapIntensity={0}
+              />
+            </mesh>
+          </group>
         </group>
       </group>
     </group>

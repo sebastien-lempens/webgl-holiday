@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
+import { PerspectiveCamera } from "@react-three/drei";
 import { Scene } from "~/components/Scene";
 import { UI } from "~/components/UI";
 import { Color } from "three";
@@ -17,6 +18,10 @@ const BackgroundSceneColor = ({ weather }) => {
     case "sunset":
       setColors.inner = new Color("#bd8435");
       setColors.outer = new Color("#59000d");
+      break;
+    case "night":
+      setColors.inner = new Color("#00b2ff");
+      setColors.outer = new Color("#2c2e76");
       break;
     case "rainy":
       setColors.inner = new Color("#c7968a");
@@ -50,7 +55,7 @@ const BackgroundSceneColor = ({ weather }) => {
             void main() {
               vec2 uv = vUv;
               vec3 color = vec3(1.0);
-              float circle = 0.3 / (length(uv-0.5)/0.5);
+              float circle = 0.2 / (length(uv-0.5)/0.5);
               color = mix(uColorOuter, uColorInner, circle);
               gl_FragColor.rgba = vec4(color, 1.0);
             }
@@ -61,24 +66,32 @@ const BackgroundSceneColor = ({ weather }) => {
     </>
   );
 };
-const App = () => {
+const MainScene = () => {
   useControls("Weather", {
     wheather: {
-      value: "sunny",
-      options: ["sunny", "sunset", "rainy"],
+      value: "night",
+      options: ["sunny", "sunset", "night", "rainy"],
       onChange: v => {
         setWeather(v);
       },
     },
   });
-  const [weather, setWeather] = useState("sunny"); // sun, snow, night
+  const [weather, setWeather] = useState("night");
   return (
-    <Canvas shadows dpr={[1, 2]} camera={{ fov: 100, position: [0, 0, 3], zoom: 4.5 }}>
+    <>
+      <PerspectiveCamera fov={100} position={[0, 0, 3]} zoom={4.5} makeDefault />
       <ambientLight intensity={0.65} />
-      <spotLight color={'#d1e0e2'}   position={[-0.8, 2, 50]} power={0.05}  angle={Math.PI/8} />
+      <spotLight color={"#d1e0e2"} position={[-0.8, 2, 50]} power={0.05} angle={Math.PI / 8} />
       <UI />
       <Scene weather={weather} />
       <BackgroundSceneColor key={weather} weather={weather} />
+    </>
+  );
+};
+const App = () => {
+  return (
+    <Canvas shadows dpr={[1, 2]}>
+      <MainScene />
     </Canvas>
   );
 };
