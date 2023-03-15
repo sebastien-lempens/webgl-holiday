@@ -1,25 +1,19 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { PerspectiveCamera } from "@react-three/drei";
 import { Road } from "./SceneFrame/Road";
 import { Van } from "./SceneFrame/Van";
 import { EnvBackground } from "./SceneFrame/EnvBackground";
 import { Lights } from "./SceneFrame/Lights";
-import { Color } from "three";
 import { useControls } from "leva";
 
 export const SceneFrame = ({ weather, cameraParent }) => {
   const frameRef = useRef();
   const cameraRef = useRef();
   const scene = useRef();
+
   const { scenePosition } = useControls("Scene", {
     scenePosition: { x: 0, y: -1.65, z: 1.5 },
-  });
-
-  const { FogColor, FogNear, FogFar } = useControls("Fog", {
-    FogColor: "#96c4c1",
-    FogNear: 2,
-    FogFar: 7,
   });
   useFrame(() => {
     if (!cameraParent) return;
@@ -32,7 +26,6 @@ export const SceneFrame = ({ weather, cameraParent }) => {
     <>
       <group>
         <PerspectiveCamera ref={cameraRef} manual makeDefault fov={90} aspect={1 / 1} zoom={1.5} />
-        <fog attach='fog' near={FogNear} far={FogFar} color={new Color(FogColor)} />
         <group>
           <EnvBackground weather={weather} cameraParent={cameraParent} />
           <Lights weather={weather} />
@@ -44,7 +37,6 @@ export const SceneFrame = ({ weather, cameraParent }) => {
           </group>
         </group>
       </group>
-    
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState } from "react";
-import { useGLTF, useTexture, useFBO } from "@react-three/drei";
+import { SpotLight, useGLTF, useTexture, useFBO } from "@react-three/drei";
 import { folder, useControls } from "leva";
 import { useFrame } from "@react-three/fiber";
 import { Color, DoubleSide, Vector2 } from "three";
@@ -25,7 +25,6 @@ export const Van = ({ weather }) => {
   const vanDriverRef = useRef();
   const vanDriverHandRef = useRef();
   const renderTarget = useFBO();
-
   // Texture
   const [textureVanStructure, textureVanLuggage] = useTexture(
     ["/texture/van-structure.webp", "/texture/van-luggage.webp"],
@@ -40,7 +39,7 @@ export const Van = ({ weather }) => {
       vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
       vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
       vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
-      VanHeadlightsPosition: { x: 0, y: 0.95, z: 0.4 },
+      VanHeadlightsPosition: { x: 0, y: 0.91, z: 0.45 },
     }),
   });
 
@@ -81,8 +80,6 @@ export const Van = ({ weather }) => {
     vanWindowsRef.current.material.uniforms.uTexture.value = renderTarget.texture;
     gl.setRenderTarget(null);
     vanRef.current.visible = true;
-
-    // Render Target Bloom
   });
 
   return (
@@ -90,7 +87,7 @@ export const Van = ({ weather }) => {
       <group ref={vanBodyWorkRef}>
         <group name='VanLuggage' ref={VanLuggageRef}>
           <mesh geometry={VanLuggage.geometry} position={[...Object.values(VanLuggage.position)]} receiveShadow castShadow>
-            <meshStandardMaterial map={textureVanLuggage} toneMapped={false} envMapIntensity={1} roughness={0.5} metalness={0.0} />
+            <meshStandardMaterial map={textureVanLuggage} toneMapped={false} envMapIntensity={5} roughness={0.5} metalness={0.0} />
           </mesh>
           <mesh
             ref={VanLuggageWheelRef}
@@ -104,7 +101,7 @@ export const Van = ({ weather }) => {
             receiveShadow
             castShadow
           >
-            <meshStandardMaterial toneMapped={false} map={textureVanLuggage} envMapIntensity={1} roughness={0.6} metalness={0.4} />
+            <meshStandardMaterial toneMapped={false} map={textureVanLuggage} envMapIntensity={5} roughness={0.6} metalness={0.4} />
           </mesh>
         </group>
         <group name='Van Group'>
@@ -197,15 +194,8 @@ export const Van = ({ weather }) => {
             <meshBasicMaterial color={"rgb(25,25,25)"} />
           </mesh>
           <group visible={weather === "night"} name='Headlights' position={[...Object.values(VanHeadlightsPosition)]}>
-            {/* <SpotLight   distance={100} angle={0.1} penumbra={0.15} color={new Color("#e3ff42")} intensity={10} position={[0, 1.2, 2]} /> */}
-            <mesh visible={false} name='Headlights' geometry={VanHeadlights.geometry}>
-              <meshStandardMaterial
-                emissive={new Color("yellow")}
-                emissiveIntensity={5}
-                color={new Color("yellow")}
-                toneMapped={false}
-                envMapIntensity={0}
-              />
+            <mesh name='Headlights' geometry={VanHeadlights.geometry}>
+              <meshStandardMaterial emissive={[1, 1, 0]} emissiveIntensity={2} color={[0, 0, 0]} toneMapped={false} side={DoubleSide} />
             </mesh>
           </group>
         </group>

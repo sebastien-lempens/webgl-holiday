@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PerspectiveCamera } from "@react-three/drei";
+import { PerspectiveCamera, Preload } from "@react-three/drei";
 import { Scene } from "~/components/Scene";
 import { UI } from "~/components/UI";
 import { Color } from "three";
@@ -90,7 +90,7 @@ const MainScene = () => {
 };
 const App = () => {
   return (
-    <Canvas shadows dpr={[1, 2]}>
+    <Canvas  shadows dpr={[1, 2]}>
       <MainScene />
     </Canvas>
   );
