@@ -64,19 +64,25 @@ export const Scene = ({ weather }) => {
   useEffect(() => {
     switch (weather) {
       case "sunny":
-        bloomEffect.current.bloomLumThresold = 0.85;
+        bloomEffect.current.bloomLumThresold = 1;
         bloomEffect.current.bloomLumSmoothing = 0.2;
         bloomEffect.current.bloomIntensity = 1;
         bloomEffect.current.bloomRadius = 0.85;
         break;
       case "sunset":
-        bloomEffect.current.bloomLumThresold = 0.6;
+        bloomEffect.current.bloomLumThresold = 1;
         bloomEffect.current.bloomLumSmoothing = 0.2;
         bloomEffect.current.bloomIntensity = 3;
         bloomEffect.current.bloomRadius = 0.85;
         break;
       case "night":
-        bloomEffect.current.bloomLumThresold = 0.95;
+        bloomEffect.current.bloomLumThresold = 1;
+        bloomEffect.current.bloomLumSmoothing = 0.4;
+        bloomEffect.current.bloomIntensity = 8;
+        bloomEffect.current.bloomRadius = 0.8;
+        break;
+      case "rainy":
+        bloomEffect.current.bloomLumThresold = 1;
         bloomEffect.current.bloomLumSmoothing = 0.4;
         bloomEffect.current.bloomIntensity = 12;
         bloomEffect.current.bloomRadius = 0.75;
@@ -134,7 +140,7 @@ export const Scene = ({ weather }) => {
               toneMapped={true}
               roughness={0.2}
               metalness={0}
-              color={[0.9, 0.9, 0.9]}
+              color={[1.0,1.0,1.0]}
               normalMap={normalMap}
               normalScale={[0.05, 0.05]}
             />

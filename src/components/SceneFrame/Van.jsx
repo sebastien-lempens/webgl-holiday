@@ -195,7 +195,7 @@ export const Van = ({ weather }) => {
           </mesh>
           <group visible={weather === "night"} name='Headlights' position={[...Object.values(VanHeadlightsPosition)]}>
             <mesh name='Headlights' geometry={VanHeadlights.geometry}>
-              <meshStandardMaterial emissive={[1, 1, 0]} emissiveIntensity={2} color={[0, 0, 0]} toneMapped={false} side={DoubleSide} />
+              <meshStandardMaterial emissive={[6, 1, 0]} emissiveIntensity={2} color={[0, 0, 0]} toneMapped={false} side={DoubleSide} />
             </mesh>
           </group>
         </group>

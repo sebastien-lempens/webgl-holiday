@@ -21,7 +21,6 @@ export const EnvBackground = ({ weather, cameraParent }) => {
   let texture = null;
   if (texturePath) {
     texture = useTexture(texturePath, texture => {
-      console.log(texture);
       texture.wrapS = texture.wrapT = RepeatWrapping;
       texture.anisotropy = 16;
       texture.flipY = true;
