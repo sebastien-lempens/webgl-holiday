@@ -70,9 +70,9 @@ export const Van = ({ weather }) => {
   useFrame(({ gl, scene, camera, clock }) => {
     const shake = Math.sin(clock.getElapsedTime() * 35) * 0.005;
     vanBodyWorkRef.current.position.y = shake;
-    VanLuggageRef.current.position.y = shake + shake * 0.3;
+    VanLuggageRef.current.position.y = 0.04 + shake + shake * 0.3;
     VanLuggageWheelRef.current.rotation.z -= 0.06;
-    vanDriverHandRef.current.rotation.z += Math.sin(0.9 - clock.getElapsedTime() * 10) * 0.05;
+    vanDriverHandRef.current.rotation.z  = 1.3 + Math.sin(0.9 + clock.getElapsedTime() * 10) * 0.5;
     // Render Target Windows
     vanRef.current.visible = false;
     gl.setRenderTarget(renderTarget);
@@ -182,7 +182,7 @@ export const Van = ({ weather }) => {
                 //vec3 texture = vec3( texture2D(uTexture, vec2(ux-0.1, uy-0.1)) );
                 vec3 texture = vec3(blur5(uTexture, vec2(ux-0.1, uy-0.1), uResolution.xy, vec2(5.0,1.0)));
                 color = mix(texture, uColor * vec3(-0.25) ,texture.y);
-                gl_FragColor.rgba = vec4(color, 0.85);
+                gl_FragColor.rgba = vec4(color, 0.7);
               }`}
             />
           </mesh>

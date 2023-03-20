@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Environment, useAspect, useTexture } from "@react-three/drei";
 import { RepeatWrapping, DoubleSide } from "three";
 import { useFrame } from "@react-three/fiber";
+import { Rain } from "./Rain";
 const WeatherBackground = ({ map, cameraParent }) => {
   const mesh = useRef();
   const scale = useAspect(1024, 512, 0.95);
@@ -10,9 +11,9 @@ const WeatherBackground = ({ map, cameraParent }) => {
     mesh.current.material.map.offset.x = cameraParent?.quaternion.y * 0.25;
   });
   return (
-    <mesh name="backgroundEnvPicture" ref={mesh} scale={scale} position-z={-20}>
+    <mesh name='backgroundEnvPicture' ref={mesh} scale={scale} position-z={-20}>
       <planeGeometry args={[4, 4]} />
-      <meshBasicMaterial toneMapped={false} fog={false} color={[1.5,1.5,1.5]} map={map} />
+      <meshBasicMaterial toneMapped={false} fog={false} color={[1.5, 1.5, 1.5]} map={map} />
     </mesh>
   );
 };
@@ -29,6 +30,7 @@ export const EnvBackground = ({ weather, cameraParent }) => {
 
   return (
     <>
+      <Rain visible={weather == "rainy"} />
       <Environment frames={Infinity} background resolution={2048}>
         <ambientLight />
         <WeatherBackground map={texture} cameraParent={cameraParent} />
