@@ -35,7 +35,7 @@ export const Van = ({ weather }) => {
   // Control
   const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition, VanHeadlightsPosition } = useControls("Meshs", {
     Van: folder({
-      vanPosition: { x: 0, y: 0.73, z: 0 },
+      vanPosition: { x: 0, y: 0.71, z: 0 },
       vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
       vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
       vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
@@ -83,14 +83,23 @@ export const Van = ({ weather }) => {
   });
 
   return (
-    <group ref={vanRef} position-y={vanPosition.y} key={weather}>
+    <group name='vanGroup' ref={vanRef} position-y={vanPosition.y} key={weather}>
       <group ref={vanBodyWorkRef}>
         <group name='VanLuggage' ref={VanLuggageRef}>
-          <mesh geometry={VanLuggage.geometry} position={[...Object.values(VanLuggage.position)]} receiveShadow castShadow>
+          <mesh
+            name='VanLuggage'
+            userData-vangroup={true}
+            geometry={VanLuggage.geometry}
+            position={[...Object.values(VanLuggage.position)]}
+            receiveShadow
+            castShadow
+          >
             <meshStandardMaterial map={textureVanLuggage} toneMapped={false} envMapIntensity={5} roughness={0.5} metalness={0.0} />
           </mesh>
           <mesh
+            name='VanLuggageWheel'
             ref={VanLuggageWheelRef}
+            userData-vangroup={true}
             geometry={VanLuggageWheel.geometry}
             position-x={0.2}
             position-y={1.57}
@@ -105,7 +114,14 @@ export const Van = ({ weather }) => {
           </mesh>
         </group>
         <group name='Van Group'>
-          <mesh name='Van' geometry={Van.geometry} position={[...Object.values(Van.position)]} receiveShadow castShadow>
+          <mesh
+            name='Van'
+            userData-vangroup={true}
+            geometry={Van.geometry}
+            position={[...Object.values(Van.position)]}
+            receiveShadow
+            castShadow
+          >
             <meshStandardMaterial
               toneMapped={false}
               side={DoubleSide}
@@ -118,6 +134,7 @@ export const Van = ({ weather }) => {
           <mesh
             name='VanWindows'
             ref={vanWindowsRef}
+            userData-vangroup={true}
             geometry={VanWindows.geometry}
             toneMapped={false}
             envMapIntensity={50}
@@ -172,6 +189,7 @@ export const Van = ({ weather }) => {
           <mesh
             name='Driver'
             ref={vanDriverRef}
+            userData-vangroup={true}
             geometry={VanDriver.geometry}
             position={[...Object.values(vanDriverPosition)]}
             receiveShadow
@@ -181,6 +199,7 @@ export const Van = ({ weather }) => {
           </mesh>
           <mesh
             name='DriverHand'
+            userData-vangroup={true}
             ref={vanDriverHandRef}
             geometry={VanDriverHand.geometry}
             position={[...Object.values(vanDriverHandPosition)]}
@@ -190,11 +209,11 @@ export const Van = ({ weather }) => {
           >
             <meshStandardMaterial color={"#ffd98a"} metalness={0.4} />
           </mesh>
-          <mesh name='Seats' geometry={VanSeats.geometry} position={[...Object.values(vanSeatsPosition)]}>
+          <mesh name='Seats' userData-vangroup={true} geometry={VanSeats.geometry} position={[...Object.values(vanSeatsPosition)]}>
             <meshBasicMaterial color={"rgb(25,25,25)"} />
           </mesh>
           <group visible={weather === "night"} name='Headlights' position={[...Object.values(VanHeadlightsPosition)]}>
-            <mesh name='Headlights' geometry={VanHeadlights.geometry}>
+            <mesh name='Headlights'  geometry={VanHeadlights.geometry}>
               <meshStandardMaterial emissive={[6, 1, 0]} emissiveIntensity={2} color={[0, 0, 0]} toneMapped={false} side={DoubleSide} />
             </mesh>
           </group>

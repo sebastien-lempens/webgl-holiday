@@ -12,8 +12,8 @@ const BackgroundSceneColor = ({ weather }) => {
   };
   switch (weather) {
     case "sunny":
-      setColors.inner = new Color("#97b7c4");
-      setColors.outer = new Color("#3f5569");
+      setColors.inner = new Color("#97c1dc");
+      setColors.outer = new Color("#4d7a98");
       break;
     case "sunset":
       setColors.inner = new Color("#bd8435");
@@ -21,11 +21,11 @@ const BackgroundSceneColor = ({ weather }) => {
       break;
     case "night":
       setColors.inner = new Color("#00b2ff");
-      setColors.outer = new Color("#2c2e76");
+      setColors.outer = new Color("#565e9a");
       break;
     case "rainy":
-      setColors.inner = new Color("#c7968a");
-      setColors.outer = new Color("#6edae8");
+      setColors.inner = new Color("#74798a");
+      setColors.outer = new Color("#474c5e");
       break;
   }
   const uniforms = useMemo(
@@ -55,7 +55,7 @@ const BackgroundSceneColor = ({ weather }) => {
             void main() {
               vec2 uv = vUv;
               vec3 color = vec3(1.0);
-              float circle = 0.2 / (length(uv-0.5)/0.5);
+              float circle =  0.3 - (length(uv-0.5));
               color = mix(uColorOuter, uColorInner, circle);
               gl_FragColor.rgba = vec4(color, 1.0);
             }
@@ -69,14 +69,15 @@ const BackgroundSceneColor = ({ weather }) => {
 const MainScene = () => {
   useControls("Weather", {
     wheather: {
-      value: "night",
+      value: "rainy",
       options: ["sunny", "sunset", "night", "rainy"],
       onChange: v => {
         setWeather(v);
       },
     },
   });
-  const [weather, setWeather] = useState("night");
+  const [weather, setWeather] = useState(null);
+  if (!weather) return false;
   return (
     <>
       <PerspectiveCamera fov={100} position={[0, 0, 3]} zoom={4.5} makeDefault />
@@ -90,7 +91,7 @@ const MainScene = () => {
 };
 const App = () => {
   return (
-    <Canvas  shadows dpr={[1, 2]}>
+    <Canvas shadows dpr={[1, 2]}>
       <MainScene />
     </Canvas>
   );

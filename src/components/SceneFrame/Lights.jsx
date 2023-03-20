@@ -76,19 +76,19 @@ export const Lights = ({ weather }) => {
       break;
     case "rainy":
       {
-        ambiantLightParamsRef.current.color = "#4646ef";
-        ambiantLightParamsRef.current.intensity = 3;
+        ambiantLightParamsRef.current.color = "#2f496c";
+        ambiantLightParamsRef.current.intensity = -1;
       }
       {
-        spotLightParamsRef.current.color = "#e8e5b0";
-        spotLightParamsRef.current.intensity = 4.0;
-        spotLightParamsRef.current.position = [-50, 100, 10];
-        spotLightParamsRef.current.angle = 0.03;
+        spotLightParamsRef.current.color = "#8290b7";
+        spotLightParamsRef.current.intensity = 1.0;
+        spotLightParamsRef.current.position = [0, 300, 50];
+        spotLightParamsRef.current.angle = 0.1;
         spotLightParamsRef.current.penumbra = 0.3;
       }
       {
-        hemisphereLightParamsRef.current.color = "#ff8600";
-        hemisphereLightParamsRef.current.intensity = -0.1;
+        hemisphereLightParamsRef.current.color = "#29333e";
+        hemisphereLightParamsRef.current.intensity = -0.08;
       }
       break;
   }

@@ -10,7 +10,7 @@ const WeatherBackground = ({ map, cameraParent }) => {
     mesh.current.material.map.offset.x = cameraParent?.quaternion.y * 0.25;
   });
   return (
-    <mesh ref={mesh} scale={scale} position-z={-20}>
+    <mesh name="backgroundEnvPicture" ref={mesh} scale={scale} position-z={-20}>
       <planeGeometry args={[4, 4]} />
       <meshBasicMaterial toneMapped={false} fog={false} color={[1.5,1.5,1.5]} map={map} />
     </mesh>
