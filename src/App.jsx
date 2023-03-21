@@ -78,12 +78,17 @@ const MainScene = () => {
   });
   const [weather, setWeather] = useState(null);
   if (!weather) return false;
+  const handleWeather = weatherValue => {
+    if (weatherValue) {
+      setWeather(weatherValue);
+    }
+  };
   return (
     <>
       <PerspectiveCamera fov={100} position={[0, 0, 3]} zoom={4.5} makeDefault />
       <ambientLight intensity={0.65} />
       <spotLight color={"#d1e0e2"} position={[-0.8, 2, 50]} power={0.05} angle={Math.PI / 8} />
-      <UI />
+      <UI weather={weather} handleWeather={handleWeather} />
       <Scene weather={weather} />
       <BackgroundSceneColor key={weather} weather={weather} />
     </>

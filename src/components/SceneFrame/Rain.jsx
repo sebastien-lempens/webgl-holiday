@@ -46,7 +46,7 @@ export const Rain = ({ visible }) => {
     <group>
       <Instances rotation={[0.45, 0, 0.0]} position-y={-1.5}>
         <sphereGeometry args={[0.1, 2, 2]} />
-        <meshStandardMaterial color={[0, 0.2, 0.2]} blending={AdditiveBlending} emissive={[0.2, 0.2, 0.4]} transparent opacity={0.35} />
+        <meshStandardMaterial color={[0, 0.2, 0.2]} blending={AdditiveBlending} emissive={[0.2, 0.2, 0.4]} transparent opacity={0.45} />
         {drops.map((drop, i) => (
           <Drop
             key={i}

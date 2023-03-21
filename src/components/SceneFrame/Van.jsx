@@ -49,24 +49,30 @@ export const Van = ({ weather }) => {
 
   const uniforms = useMemo(() => {
     let uColor = null;
+    let uWeatherType = null;
     switch (weather) {
       case "sunny":
         uColor = new Color("#42b2eb");
+        uWeatherType = 1;
         break;
       case "sunset":
         uColor = new Color("#e83109");
+        uWeatherType = 2;
         break;
       case "night":
         uColor = new Color("#42b2eb");
+        uWeatherType = 3;
         break;
       case "rainy":
-        uColor = new Color("#42b2eb");
+        uColor = new Color("#242d4e");
+        uWeatherType = 4;
         break;
     }
     return {
       uTexture: { value: null },
       uResolution: { value: new Vector2(innerWidth, innerHeight) },
       uColor: { value: uColor },
+      uWeather: { value: uWeatherType },
     };
   }, [weather]);
 
@@ -74,7 +80,7 @@ export const Van = ({ weather }) => {
   useFrame(({ gl, scene, camera, clock }) => {
     const shake = Math.sin(clock.getElapsedTime() * 35) * 0.005;
     vanBodyWorkRef.current.position.y = shake;
-    VanLuggageRef.current.position.y = 0.04 + shake + shake * 0.3;
+    VanLuggageRef.current.position.y = 0.04 + shake * 0.4 + shake * 0.2;
     VanLuggageWheelRef.current.rotation.z -= 0.06;
     vanDriverHandRef.current.rotation.z = 1.3 + Math.sin(0.9 + clock.getElapsedTime() * 10) * 0.5;
     // Render Target Windows
@@ -170,6 +176,7 @@ export const Van = ({ weather }) => {
               uniform sampler2D uTexture;
               uniform vec2 uResolution;
               uniform vec3 uColor;
+              uniform int uWeather;
               varying vec2 vUv;
               varying vec3 worldNormal;
               varying vec3 eyeVector;
@@ -185,14 +192,18 @@ export const Van = ({ weather }) => {
 
               void main() {
                 vec2 uv = gl_FragCoord.xy / uResolution.xy;
-                vec3 refractVec = refract(eyeVector, worldNormal, 0.2);
+                vec3 refractVec = refract(eyeVector, worldNormal, 0.3);
                 float ux = uv.x - refractVec.x;
                 float uy = uv.y - refractVec.y;
                 vec3 color = vec3(0.0);
-                //vec3 texture = vec3( texture2D(uTexture, vec2(ux-0.1, uy-0.1)) );
                 vec3 texture = vec3(blur5(uTexture, vec2(ux-0.1, uy-0.1), uResolution.xy, vec2(5.0,1.0)));
-                color = mix(texture, uColor * vec3(-0.25) ,texture.y);
-                gl_FragColor.rgba = vec4(color, 0.7);
+                color = mix(texture, uColor * vec3(-0.25), texture.y);
+                float wiperTrace = smoothstep(0.35, 0.45, length(vUv-0.5) );
+                if(uWeather == 4) {
+                  color += color * wiperTrace;
+                  color -= 0.1;
+                }
+                gl_FragColor.rgba = vec4(color, 0.85);
               }`}
             />
           </mesh>

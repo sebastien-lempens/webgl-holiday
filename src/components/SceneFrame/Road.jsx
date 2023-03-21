@@ -40,40 +40,43 @@ export const Road = ({ weather }) => {
   useFrame(({ clock }) => {
     {
       // Anim road
-      textureRoad.offset.x -= 0.009;
+      textureRoad.offset.x -= 0.015;
       const speed = clock.getElapsedTime() * 1.0;
       landscapeRoad.current.rotation.x = -speed;
     }
   });
+
   let projection = useBoxProjectedEnv([0, -18, -10], [40, 37, 40]);
+
   return (
     <group>
       <group>
         {(weather !== "rainy" || weather !== "night") && (
           <Clone ref={roadRef} receiveShadow castShadow object={roadMesh} inject={<meshStandardMaterial map={textureRoad} />} />
         )}
-        {weather === "rainy" && (
-          <CubeCamera resolution={2048} frames={100}>
-            {texture => (
-              <Clone
-                object={roadMesh}
-                inject={
-                  <meshStandardMaterial
-                    map={textureRoad}
-                    roughnessMap={textureRoughnessRoad}
-                    normalMap={textureNormalRoad}
-                    normalScale={[-0.65, 0.0]}
-                    metalness={0.5}
-                    envMap={texture}
-                    envMapIntensity={5}
-                    toneMapped={false}
-                    {...projection}
-                  />
-                }
-              />
-            )}
-          </CubeCamera>
-        )}
+
+        <CubeCamera resolution={2048} frames={100}>
+          {texture => (
+            <Clone
+              visible={weather === "rainy"}
+              object={roadMesh}
+              inject={
+                <meshStandardMaterial
+                  map={textureRoad}
+                  roughnessMap={textureRoughnessRoad}
+                  normalMap={textureNormalRoad}
+                  normalScale={[-0.65, 0.0]}
+                  metalness={0.5}
+                  envMap={texture}
+                  envMapIntensity={5}
+                  toneMapped={false}
+                  {...projection}
+                />
+              }
+            />
+          )}
+        </CubeCamera>
+
         {weather === "night" && (
           <CubeCamera resolution={512} frames={1}>
             {texture => (
