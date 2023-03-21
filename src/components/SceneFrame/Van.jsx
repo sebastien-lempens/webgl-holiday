@@ -16,6 +16,7 @@ export const Van = ({ weather }) => {
     driver: VanDriver,
     driverHand: VanDriverHand,
     headlights: VanHeadlights,
+    wiper: VanWiper,
   } = nodes;
   const vanRef = useRef();
   const vanBodyWorkRef = useRef();
@@ -24,6 +25,7 @@ export const Van = ({ weather }) => {
   const vanWindowsRef = useRef();
   const vanDriverRef = useRef();
   const vanDriverHandRef = useRef();
+  const VanWiperRef = useRef();
   const renderTarget = useFBO();
   // Texture
   const [textureVanStructure, textureVanLuggage] = useTexture(
@@ -33,15 +35,17 @@ export const Van = ({ weather }) => {
     }
   );
   // Control
-  const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition, VanHeadlightsPosition } = useControls("Meshs", {
-    Van: folder({
-      vanPosition: { x: 0, y: 0.71, z: 0 },
-      vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
-      vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
-      vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
-      VanHeadlightsPosition: { x: 0, y: 0.91, z: 0.45 },
-    }),
-  });
+  const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition, VanHeadlightsPosition, VanWiperRefPosition } =
+    useControls("Meshs", {
+      Van: folder({
+        vanPosition: { x: 0, y: 0.71, z: 0 },
+        vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
+        vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
+        vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
+        VanHeadlightsPosition: { x: 0, y: 0.91, z: 0.45 },
+        VanWiperRefPosition: { x: 0, y: 0.98, z: 0.4 },
+      }),
+    });
 
   const uniforms = useMemo(() => {
     let uColor = null;
@@ -72,7 +76,7 @@ export const Van = ({ weather }) => {
     vanBodyWorkRef.current.position.y = shake;
     VanLuggageRef.current.position.y = 0.04 + shake + shake * 0.3;
     VanLuggageWheelRef.current.rotation.z -= 0.06;
-    vanDriverHandRef.current.rotation.z  = 1.3 + Math.sin(0.9 + clock.getElapsedTime() * 10) * 0.5;
+    vanDriverHandRef.current.rotation.z = 1.3 + Math.sin(0.9 + clock.getElapsedTime() * 10) * 0.5;
     // Render Target Windows
     vanRef.current.visible = false;
     gl.setRenderTarget(renderTarget);
@@ -80,6 +84,12 @@ export const Van = ({ weather }) => {
     vanWindowsRef.current.material.uniforms.uTexture.value = renderTarget.texture;
     gl.setRenderTarget(null);
     vanRef.current.visible = true;
+    {
+      //Wiper animation
+      if (weather === "rainy") {
+        VanWiperRef.current.rotation.z = Math.PI / 2 - Math.sin(clock.getElapsedTime() * 5) * 1.5;
+      }
+    }
   });
 
   return (
@@ -213,10 +223,20 @@ export const Van = ({ weather }) => {
             <meshBasicMaterial color={"rgb(25,25,25)"} />
           </mesh>
           <group visible={weather === "night"} name='Headlights' position={[...Object.values(VanHeadlightsPosition)]}>
-            <mesh name='Headlights'  geometry={VanHeadlights.geometry}>
+            <mesh name='Headlights' geometry={VanHeadlights.geometry}>
               <meshStandardMaterial emissive={[6, 1, 0]} emissiveIntensity={2} color={[0, 0, 0]} toneMapped={false} side={DoubleSide} />
             </mesh>
           </group>
+          <mesh
+            visible={weather === "rainy"}
+            name='Wiper'
+            userData-vangroup={true}
+            ref={VanWiperRef}
+            geometry={VanWiper.geometry}
+            position={[...Object.values(VanWiperRefPosition)]}
+          >
+            <meshBasicMaterial color={new Color("#242d4e")} />
+          </mesh>
         </group>
       </group>
     </group>
