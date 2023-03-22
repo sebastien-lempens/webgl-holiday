@@ -117,12 +117,12 @@ export const Scene = ({ weather }) => {
         azimuth={[-Math.PI / 4, Math.PI / 4]} // Horizontal limits
       >
         <group ref={frameRef} position-y={0.05}>
-                  <SceneFrame weather={weather} cameraParent={frameRef.current?.parent} />
           <mesh name='Frame'>
             <planeGeometry args={[1, 1]} />
             <meshStandardMaterial roughness={0.15} toneMapped={false} normalMap={normalMap} normalScale={[-0.025, -0.025]}>
               <RenderTexture attach='map' onUpdate={handleRenderTexture}>
                 <>
+                  <SceneFrame weather={weather} cameraParent={frameRef.current?.parent} />
                   <EffectComposer
                     disableNormalPass
                     stencilBuffer={false}
