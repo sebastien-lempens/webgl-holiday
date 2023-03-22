@@ -31,7 +31,7 @@ export const EnvBackground = ({ weather, cameraParent }) => {
   return (
     <>
       <Rain visible={weather == "rainy"} />
-      <Environment frames={1} background resolution={2048}>
+      <Environment frames={Infinity} background resolution={1024}>
         <ambientLight />
         <WeatherBackground map={texture} cameraParent={cameraParent} />
         <mesh position-z={0}>
