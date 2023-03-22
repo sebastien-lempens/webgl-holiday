@@ -123,21 +123,7 @@ export const Scene = ({ weather }) => {
               <RenderTexture attach='map' onUpdate={handleRenderTexture}>
                 <>
                   <SceneFrame weather={weather} cameraParent={frameRef.current?.parent} />
-                  <EffectComposer
-                    disableNormalPass
-                    stencilBuffer={false}
-                    scene={frameNestedSceneRef.current?.getScene}
-                    camera={frameNestedSceneRef.current?.getCamera}
-                  >
-                    <Bloom
-                      mipmapBlur
-                      radius={bloomEffect.current.bloomRadius}
-                      intensity={bloomEffect.current.bloomIntensity}
-                      luminanceThreshold={bloomEffect.current.bloomLumThresold}
-                      luminanceSmoothing={bloomEffect.current.bloomLumSmoothing}
-                      height={150}
-                    />
-                  </EffectComposer>
+                 
                 </>
               </RenderTexture>
             </meshStandardMaterial>
