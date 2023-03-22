@@ -34,7 +34,7 @@ const Drop = ({ position, rotation, speed }) => {
   return <Instance ref={dropRef} position={position} scale={[0.01, 0.15, 0.01]} />;
 };
 export const Rain = ({ visible }) => {
-  const drops = Array.from({ length: 1000 }, () => ({
+  const drops = Array.from({ length: 1800 }, () => ({
     factor: MathUtils.randInt(20, 100),
     speed: MathUtils.randFloat(1, 2),
     xFactor: MathUtils.randFloatSpread(2),
@@ -45,8 +45,8 @@ export const Rain = ({ visible }) => {
   return (
     <group>
       <Instances rotation={[0.45, 0, 0.0]} position-y={-1.5}>
-        <sphereGeometry args={[0.1, 2, 2]} />
-        <meshStandardMaterial color={[0, 0.2, 0.2]} blending={AdditiveBlending} emissive={[0.2, 0.2, 0.4]} transparent opacity={0.45} />
+        <sphereGeometry args={[0.08, 2, 2]} />
+        <meshStandardMaterial color={[0, 0.2, 0.2]} blending={AdditiveBlending} emissive={[0.2, 0.2, 0.4]} transparent opacity={0.5} />
         {drops.map((drop, i) => (
           <Drop
             key={i}

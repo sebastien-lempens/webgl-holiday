@@ -1,10 +1,10 @@
 import { useState, useMemo, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PerspectiveCamera, Preload } from "@react-three/drei";
+import { PerspectiveCamera, useDetectGPU } from "@react-three/drei";
 import { Scene } from "~/components/Scene";
 import { UI } from "~/components/UI";
 import { Color } from "three";
-import { useControls } from "leva";
+
 const BackgroundSceneColor = ({ weather }) => {
   const setColors = {
     inner: null,
@@ -67,37 +67,36 @@ const BackgroundSceneColor = ({ weather }) => {
   );
 };
 const MainScene = () => {
-  useControls("Weather", {
-    wheather: {
-      value: "rainy",
-      options: ["sunny", "sunset", "night", "rainy"],
-      onChange: v => {
-        setWeather(v);
-      },
-    },
-  });
-  const [weather, setWeather] = useState(null);
+  const [loaded = false] = useState(() => true);
+  const [weather, setWeather] = useState("sunny");
   if (!weather) return false;
   const handleWeather = weatherValue => {
     if (weatherValue) {
       setWeather(weatherValue);
     }
   };
+  if (!loaded) return false;
   return (
     <>
       <PerspectiveCamera fov={100} position={[0, 0, 3]} zoom={4.5} makeDefault />
       <ambientLight intensity={0.65} />
-      <spotLight color={"#d1e0e2"} position={[-0.8, 2, 50]} power={0.05} angle={Math.PI / 8} />
+      <spotLight color={"#d1e0e2"} position={[-0.8, 2, 50]} power={0.065} angle={Math.PI / 8} />
       <UI weather={weather} handleWeather={handleWeather} />
       <Scene weather={weather} />
       <BackgroundSceneColor key={weather} weather={weather} />
     </>
   );
 };
+
 const App = () => {
+  const GPUTier = useDetectGPU();
+  let dpr = GPUTier.isMobile ? 0.5 : 1;
+  console.log(GPUTier);
   return (
-    <Canvas shadows dpr={[1, 2]}>
-      <MainScene />
+    <Canvas shadows dpr={dpr}>
+      <Suspense fallback={null}>
+        <MainScene />
+      </Suspense>
     </Canvas>
   );
 };

@@ -5,16 +5,11 @@ import { Road } from "./SceneFrame/Road";
 import { Van } from "./SceneFrame/Van";
 import { EnvBackground } from "./SceneFrame/EnvBackground";
 import { Lights } from "./SceneFrame/Lights";
-import { useControls } from "leva";
 
 export const SceneFrame = ({ weather, cameraParent }) => {
   const frameRef = useRef();
   const cameraRef = useRef();
   const scene = useRef();
-
-  const { scenePosition } = useControls("Scene", {
-    scenePosition: { x: 0, y: -1.65, z: 1.5 },
-  });
   useFrame(() => {
     if (!cameraParent) return;
     frameRef.current.position.x = cameraParent?.quaternion.y * 0.5;
@@ -30,7 +25,7 @@ export const SceneFrame = ({ weather, cameraParent }) => {
           <EnvBackground weather={weather} cameraParent={cameraParent} />
           <Lights weather={weather} />
           <group name='SceneFrame' ref={frameRef} position-z={-8.5} scale={[3, 3, 3]}>
-            <group ref={scene} position={[...Object.values(scenePosition)]}>
+            <group ref={scene} position={[0, -1.65, 1.5]}>
               <Road weather={weather} />
               <Van weather={weather} />
             </group>

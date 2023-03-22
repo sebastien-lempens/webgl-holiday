@@ -1,12 +1,11 @@
-import { useRef, useMemo, useState } from "react";
-import { SpotLight, useGLTF, useTexture, useFBO } from "@react-three/drei";
+import { useRef, useMemo } from "react";
+import { useGLTF, useTexture, useFBO } from "@react-three/drei";
 import { folder, useControls } from "leva";
 import { useFrame } from "@react-three/fiber";
 import { Color, DoubleSide, Vector2 } from "three";
 
 export const Van = ({ weather }) => {
-  const { nodes } = useGLTF("/scene.glb");
-  //console.log(nodes);
+  const { nodes } = useGLTF("/scene-draco.glb");
   const {
     VanLuggage,
     Van,
@@ -36,16 +35,20 @@ export const Van = ({ weather }) => {
   );
   // Control
   const { vanPosition, vanDriverPosition, vanDriverHandPosition, vanSeatsPosition, VanHeadlightsPosition, VanWiperRefPosition } =
-    useControls("Meshs", {
-      Van: folder({
-        vanPosition: { x: 0, y: 0.71, z: 0 },
-        vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
-        vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
-        vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
-        VanHeadlightsPosition: { x: 0, y: 0.91, z: 0.45 },
-        VanWiperRefPosition: { x: 0, y: 0.98, z: 0.4 },
-      }),
-    });
+    useControls(
+      "Meshs",
+      {
+        Van: folder({
+          vanPosition: { x: 0, y: 0.71, z: 0 },
+          vanDriverPosition: { x: 0.16, y: 0.94, z: 0.29 },
+          vanDriverHandPosition: { x: 0.25, y: 0.98, z: 0.26 },
+          vanSeatsPosition: { x: 0.01, y: 1, z: 0 },
+          VanHeadlightsPosition: { x: 0, y: 0.91, z: 0.45 },
+          VanWiperRefPosition: { x: 0, y: 0.98, z: 0.4 },
+        }),
+      },
+      { collapsed: true }
+    );
 
   const uniforms = useMemo(() => {
     let uColor = null;
@@ -110,7 +113,7 @@ export const Van = ({ weather }) => {
             receiveShadow
             castShadow
           >
-            <meshStandardMaterial map={textureVanLuggage} toneMapped={false} envMapIntensity={5} roughness={0.5} metalness={0.0} />
+            <meshStandardMaterial map={textureVanLuggage} toneMapped={false} envMapIntensity={2} roughness={0.5} metalness={0.0} />
           </mesh>
           <mesh
             name='VanLuggageWheel'
@@ -198,7 +201,7 @@ export const Van = ({ weather }) => {
                 vec3 color = vec3(0.0);
                 vec3 texture = vec3(blur5(uTexture, vec2(ux-0.1, uy-0.1), uResolution.xy, vec2(5.0,1.0)));
                 color = mix(texture, uColor * vec3(-0.25), texture.y);
-                float wiperTrace = smoothstep(0.35, 0.45, length(vUv-0.5) );
+                float wiperTrace = smoothstep(0.42, 0.45, length(vUv-0.5) );
                 if(uWeather == 4) {
                   color += color * wiperTrace;
                   color -= 0.1;

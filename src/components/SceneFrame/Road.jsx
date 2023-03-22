@@ -1,15 +1,13 @@
-import { useRef, useMemo, useState } from "react";
-import { Clone, CubeCamera, useFBO, useGLTF, useTexture, useBoxProjectedEnv } from "@react-three/drei";
-import { Color, RepeatWrapping, AdditiveBlending, MultiplyBlending } from "three";
+import { useRef } from "react";
+import { Clone, CubeCamera, useGLTF, useTexture, useBoxProjectedEnv } from "@react-three/drei";
+import { RepeatWrapping } from "three";
 import { useFrame } from "@react-three/fiber";
-import { folder, useControls } from "leva";
 
 export const Road = ({ weather }) => {
-  const { nodes } = useGLTF("/scene.glb");
+  const { nodes } = useGLTF("/scene-draco.glb");
   const { road: roadMesh, landscape: landscapeMesh, foliage: foliageMesh, poteaux: postMesh, rock: rockMesh } = nodes;
   const landscapeRoad = useRef();
   const roadRef = useRef();
-  const stopFramesRef = useRef(false);
   const [textureLandscape, textureRoad, textureRoughnessRoad, textureNormalRoad, textureFoliage, texturePost, textureRock] = useTexture(
     [
       "/texture/van-landscape.webp",
@@ -29,14 +27,12 @@ export const Road = ({ weather }) => {
         texturePost.flipY =
         textureRock.flipY =
           false;
-      // textureLandscape.anisotropy = textureRoad.anisotropy = textureRoughnessRoad.anisotropy = 16;
       textureLandscape.wrapS = textureLandscape.wrapT = RepeatWrapping;
       textureRoad.wrapS = textureRoad.wrapT = RepeatWrapping;
       textureRoughnessRoad.wrapS = textureRoughnessRoad.wrapT = RepeatWrapping;
       textureNormalRoad.wrapS = textureNormalRoad.wrapT = RepeatWrapping;
     }
   );
-
   useFrame(({ clock }) => {
     {
       // Anim road
@@ -46,39 +42,46 @@ export const Road = ({ weather }) => {
     }
   });
 
-  let projection = useBoxProjectedEnv([0, -18, -10], [40, 37, 40]);
+  let projection = useBoxProjectedEnv([0, -17, -10], [40, 37, 40]);
 
   return (
     <group>
       <group>
-        {(weather !== "rainy" || weather !== "night") && (
-          <Clone ref={roadRef} receiveShadow castShadow object={roadMesh} inject={<meshStandardMaterial map={textureRoad} />} />
+        {(weather === "sunny" || weather === "sunset") && (
+          <Clone
+            ref={roadRef}
+            receiveShadow
+            castShadow
+            object={roadMesh}
+            inject={<meshStandardMaterial map={textureRoad} normalMap={textureNormalRoad} normalScale={[0.85, -0.5]} {...projection} />}
+          />
         )}
-
-        <CubeCamera resolution={2048} frames={100}>
-          {texture => (
-            <Clone
-              visible={weather === "rainy"}
-              object={roadMesh}
-              inject={
-                <meshStandardMaterial
-                  map={textureRoad}
-                  roughnessMap={textureRoughnessRoad}
-                  normalMap={textureNormalRoad}
-                  normalScale={[-0.65, 0.0]}
-                  metalness={0.5}
-                  envMap={texture}
-                  envMapIntensity={5}
-                  toneMapped={false}
-                  {...projection}
-                />
-              }
-            />
-          )}
-        </CubeCamera>
-
+        {weather === "rainy" && (
+          <CubeCamera resolution={1024} frames={1}>
+            {texture => (
+              <Clone
+                receiveShadow
+                object={roadMesh}
+                inject={
+                  <meshStandardMaterial
+                    map={textureRoad}
+                    roughnessMap={textureRoughnessRoad}
+                    roughness={0.25}
+                    normalMap={textureNormalRoad}
+                    normalScale={[-0.15, 0.15]}
+                    metalness={0.5}
+                    envMap={texture}
+                    envMapIntensity={6}
+                    toneMapped={false}
+                    {...projection}
+                  />
+                }
+              />
+            )}
+          </CubeCamera>
+        )}
         {weather === "night" && (
-          <CubeCamera resolution={512} frames={1}>
+          <CubeCamera resolution={1024} frames={1}>
             {texture => (
               <Clone
                 receiveShadow
@@ -89,6 +92,8 @@ export const Road = ({ weather }) => {
                     map={textureRoad}
                     roughness={0.15}
                     metalness={0.3}
+                    normalMap={textureNormalRoad}
+                    normalScale={[0.95, -0.25]}
                     envMap={texture}
                     envMapIntensity={7}
                     {...projection}

@@ -1,4 +1,4 @@
-import { useRef, useState, useLayoutEffect, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { PresentationControls, RenderTexture, useGLTF, useTexture } from "@react-three/drei";
 import { SceneFrame } from "~/components/SceneFrame";
 import { RepeatWrapping, Scene as ThreeScene } from "three";
@@ -9,10 +9,13 @@ export const Scene = ({ weather }) => {
   const bloomEffect = useRef({ bloomLumThresold: 0, bloomLumSmoothing: 0, bloomIntensity: 0, bloomRadius: 0 });
   const frameNestedSceneRef = useRef(null);
   const [, setOnUpdate] = useState(null);
-  const normalMap = useTexture("/texture/fingerprint.jpg", textureMap => {
-    textureMap.wrapS = textureMap.wrapT = RepeatWrapping;
-    textureMap.flipY = false;
-  });
+  const [normalMap, textureDecal, textureDecalMask] = useTexture(
+    ["/texture/fingerprint.jpg", "/texture/decal-text.jpg", "/texture/decal-text-mask.jpg"],
+    ([textureMap, textureDecal, textureDecalMask]) => {
+      textureMap.wrapS = textureMap.wrapT = RepeatWrapping;
+      textureMap.flipY = false;
+    }
+  );
   const handleRenderTexture = e => {
     let getScene = e.__r3f.parent;
     while (getScene && !(getScene instanceof ThreeScene)) {
@@ -26,40 +29,45 @@ export const Scene = ({ weather }) => {
       setOnUpdate("update");
     }
   };
-  const [, setUseControls] = useControls(() => ({
-    Effects: folder({
-      Bloom: folder({
-        thresold: {
-          value: bloomEffect.current.bloomLumThresold,
-          onChange: v => {
-            bloomEffect.current.bloomLumThresold = v;
-          },
-          transient: false,
+  const [, setUseControls] = useControls(
+    () => (
+      {
+        Effects: folder({
+          Bloom: folder({
+            thresold: {
+              value: bloomEffect.current.bloomLumThresold,
+              onChange: v => {
+                bloomEffect.current.bloomLumThresold = v;
+              },
+              transient: false,
+            },
+            smoothing: {
+              value: bloomEffect.current.bloomLumSmoothing,
+              onChange: v => {
+                bloomEffect.current.bloomLumSmoothing = v;
+              },
+              transient: false,
+            },
+            intensity: {
+              value: bloomEffect.current.bloomIntensity,
+              onChange: v => {
+                bloomEffect.current.bloomIntensity = v;
+              },
+              transient: false,
+            },
+            radius: {
+              value: bloomEffect.current.bloomRadius,
+              onChange: v => {
+                bloomEffect.current.bloomRadius = v;
+              },
+              transient: false,
+            },
+          }),
         },
-        smoothing: {
-          value: bloomEffect.current.bloomLumSmoothing,
-          onChange: v => {
-            bloomEffect.current.bloomLumSmoothing = v;
-          },
-          transient: false,
-        },
-        intensity: {
-          value: bloomEffect.current.bloomIntensity,
-          onChange: v => {
-            bloomEffect.current.bloomIntensity = v;
-          },
-          transient: false,
-        },
-        radius: {
-          value: bloomEffect.current.bloomRadius,
-          onChange: v => {
-            bloomEffect.current.bloomRadius = v;
-          },
-          transient: false,
-        },
-      }),
-    }),
-  }));
+      { collapsed: true }),
+      }
+    )
+  );
 
   useEffect(() => {
     switch (weather) {
@@ -134,13 +142,26 @@ export const Scene = ({ weather }) => {
               </RenderTexture>
             </meshStandardMaterial>
           </mesh>
+          <mesh name='FrameDecalText' position={[0, -0.58, 0.0001]} rotation-z={-0.08} scale={0.35}>
+            <planeGeometry args={[2, 1]} />
+            <meshStandardMaterial
+              alphaTest={0.0}
+              roughness={0.13}
+              metalness={0.15}
+              opacity={0.975}
+              map={textureDecal}
+              alphaMap={textureDecalMask}
+              transparent
+              toneMapped={false}
+            />
+          </mesh>
           <mesh name='FrameBorder' scale-x={1.1} scale-y={1.3} position-y={-0.1} position-z={-0.001}>
             <planeGeometry />
             <meshStandardMaterial
               toneMapped={true}
               roughness={0.2}
               metalness={0}
-              color={[1.0,1.0,1.0]}
+              color={[1.0, 1.0, 1.0]}
               normalMap={normalMap}
               normalScale={[0.05, 0.05]}
             />
@@ -150,4 +171,4 @@ export const Scene = ({ weather }) => {
     </>
   );
 };
-useGLTF.preload("/scene.glb");
+useGLTF.preload("/scene-draco.glb");
