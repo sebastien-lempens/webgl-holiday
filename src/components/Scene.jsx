@@ -142,7 +142,7 @@ export const Scene = ({ weather }) => {
               </RenderTexture>
             </meshStandardMaterial>
           </mesh>
-          <mesh name='FrameDecalText' position={[0, -0.58, 0.0001]} rotation-z={-0.08} scale={0.35}>
+          <mesh name='FrameDecalText' position={[0, -0.58, 0.01]} rotation-z={-0.08} scale={0.35}>
             <planeGeometry args={[2, 1]} />
             <meshStandardMaterial
               alphaTest={0.0}
@@ -155,7 +155,7 @@ export const Scene = ({ weather }) => {
               toneMapped={false}
             />
           </mesh>
-          <mesh name='FrameBorder' scale-x={1.1} scale-y={1.3} position-y={-0.1} position-z={-0.001}>
+          <mesh name='FrameBorder' scale-x={1.1} scale-y={1.3} position-y={-0.1} position-z={-0.01}>
             <planeGeometry />
             <meshStandardMaterial
               toneMapped={true}
