@@ -95,7 +95,7 @@ const App = () => {
   console.log(GPUTier);
   return (
     <>
-      <Canvas shadows dpr={dpr}>
+      <Canvas  dpr={dpr}>
         <Suspense fallback={null}>
           <MainScene />
         </Suspense>
