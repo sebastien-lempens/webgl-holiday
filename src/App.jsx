@@ -91,11 +91,10 @@ const MainScene = () => {
 
 const App = () => {
   const GPUTier = useDetectGPU();
-  let dpr = GPUTier.isMobile ? 0.1 : 1;
-  console.log(GPUTier);
+  let dpr = GPUTier.isMobile ? 0.5 : 1;
   return (
     <>
-      <Canvas  dpr={dpr}>
+      <Canvas shadows dpr={dpr}>
         <Suspense fallback={null}>
           <MainScene />
         </Suspense>
