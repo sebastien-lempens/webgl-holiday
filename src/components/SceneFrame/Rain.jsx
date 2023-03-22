@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { AdditiveBlending, MathUtils } from "three";
-import { Instance, Instances } from "@react-three/drei";
+import { Instance, Instances, useDetectGPU } from "@react-three/drei";
 const Drop = ({ position, rotation, speed }) => {
   const dropRef = useRef();
   let _speed = 0;
@@ -34,7 +34,8 @@ const Drop = ({ position, rotation, speed }) => {
   return <Instance ref={dropRef} position={position} scale={[0.01, 0.15, 0.01]} />;
 };
 export const Rain = ({ visible }) => {
-  const drops = Array.from({ length: 1800 }, () => ({
+  const { isMobile } = useDetectGPU();
+  const drops = Array.from({ length: isMobile ? 800 : 1800 }, () => ({
     factor: MathUtils.randInt(20, 100),
     speed: MathUtils.randFloat(1, 2),
     xFactor: MathUtils.randFloatSpread(2),

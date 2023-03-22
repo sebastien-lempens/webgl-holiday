@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Clone, CubeCamera, useGLTF, useTexture, useBoxProjectedEnv } from "@react-three/drei";
+import { Clone, CubeCamera, useGLTF, useTexture, useBoxProjectedEnv, useDetectGPU } from "@react-three/drei";
 import { RepeatWrapping } from "three";
 import { useFrame } from "@react-three/fiber";
 
@@ -33,6 +33,7 @@ export const Road = ({ weather }) => {
       textureNormalRoad.wrapS = textureNormalRoad.wrapT = RepeatWrapping;
     }
   );
+  const { isMobile } = useDetectGPU();
   useFrame(({ clock }) => {
     {
       // Anim road
@@ -57,7 +58,7 @@ export const Road = ({ weather }) => {
           />
         )}
         {weather === "rainy" && (
-          <CubeCamera resolution={1024} frames={1}>
+          <CubeCamera resolution={isMobile ? 512 : 1024} frames={1}>
             {texture => (
               <Clone
                 receiveShadow

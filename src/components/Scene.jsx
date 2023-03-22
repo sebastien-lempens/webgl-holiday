@@ -1,10 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import { PresentationControls, RenderTexture, useGLTF, useTexture } from "@react-three/drei";
+import { PresentationControls, RenderTexture, useGLTF, useTexture, useDetectGPU } from "@react-three/drei";
 import { SceneFrame } from "~/components/SceneFrame";
 import { RepeatWrapping, Scene as ThreeScene } from "three";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { folder, useControls } from "leva";
+import { useThree } from "@react-three/fiber";
 export const Scene = ({ weather }) => {
+  const { isMobile } = useDetectGPU();
   const frameRef = useRef();
   const bloomEffect = useRef({ bloomLumThresold: 0, bloomLumSmoothing: 0, bloomIntensity: 0, bloomRadius: 0 });
   const frameNestedSceneRef = useRef(null);
@@ -29,45 +31,43 @@ export const Scene = ({ weather }) => {
       setOnUpdate("update");
     }
   };
-  const [, setUseControls] = useControls(
-    () => (
+  const [, setUseControls] = useControls(() => ({
+    Effects: folder(
       {
-        Effects: folder({
-          Bloom: folder({
-            thresold: {
-              value: bloomEffect.current.bloomLumThresold,
-              onChange: v => {
-                bloomEffect.current.bloomLumThresold = v;
-              },
-              transient: false,
+        Bloom: folder({
+          thresold: {
+            value: bloomEffect.current.bloomLumThresold,
+            onChange: v => {
+              bloomEffect.current.bloomLumThresold = v;
             },
-            smoothing: {
-              value: bloomEffect.current.bloomLumSmoothing,
-              onChange: v => {
-                bloomEffect.current.bloomLumSmoothing = v;
-              },
-              transient: false,
+            transient: false,
+          },
+          smoothing: {
+            value: bloomEffect.current.bloomLumSmoothing,
+            onChange: v => {
+              bloomEffect.current.bloomLumSmoothing = v;
             },
-            intensity: {
-              value: bloomEffect.current.bloomIntensity,
-              onChange: v => {
-                bloomEffect.current.bloomIntensity = v;
-              },
-              transient: false,
+            transient: false,
+          },
+          intensity: {
+            value: bloomEffect.current.bloomIntensity,
+            onChange: v => {
+              bloomEffect.current.bloomIntensity = v;
             },
-            radius: {
-              value: bloomEffect.current.bloomRadius,
-              onChange: v => {
-                bloomEffect.current.bloomRadius = v;
-              },
-              transient: false,
+            transient: false,
+          },
+          radius: {
+            value: bloomEffect.current.bloomRadius,
+            onChange: v => {
+              bloomEffect.current.bloomRadius = v;
             },
-          }),
-        },
-      { collapsed: true }),
-      }
-    )
-  );
+            transient: false,
+          },
+        }),
+      },
+      { collapsed: true }
+    ),
+  }));
 
   useEffect(() => {
     switch (weather) {
@@ -103,6 +103,10 @@ export const Scene = ({ weather }) => {
       radius: bloomEffect.current.bloomRadius,
     });
   }, [weather]);
+  const { camera } = useThree();
+  if (isMobile) {
+    camera.position.z = 5;
+  }
   return (
     <>
       <PresentationControls

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Environment, useAspect, useTexture } from "@react-three/drei";
+import { Environment, useAspect, useTexture, useDetectGPU } from "@react-three/drei";
 import { RepeatWrapping, DoubleSide } from "three";
 import { useFrame } from "@react-three/fiber";
 import { Rain } from "./Rain";
@@ -20,6 +20,7 @@ const WeatherBackground = ({ map, cameraParent }) => {
 export const EnvBackground = ({ weather, cameraParent }) => {
   let texturePath = `${weather}-background.jpg`;
   let texture = null;
+  const { isMobile } = useDetectGPU();
   if (texturePath) {
     texture = useTexture(texturePath, texture => {
       texture.wrapS = texture.wrapT = RepeatWrapping;
@@ -31,7 +32,7 @@ export const EnvBackground = ({ weather, cameraParent }) => {
   return (
     <>
       <Rain visible={weather == "rainy"} />
-      <Environment frames={Infinity} background resolution={1024}>
+      <Environment frames={isMobile ? 1 : Infinity} background resolution={isMobile ? 512 : 2048}>
         <ambientLight />
         <WeatherBackground map={texture} cameraParent={cameraParent} />
         <mesh position-z={0}>
